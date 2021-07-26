@@ -1,12 +1,10 @@
-document.addEventListener('DOMContentLoaded', function() {
-    document.querySelector('#AnalyseButton').addEventListener('click', analyse, false)
+document.addEventListener('DOMContentLoaded', function () {
+    document.querySelector('button').addEventListener('click', onClick, false);
 
-    function analyse() {
-        chrome.tabs.query({ currentWindow: true, active: true},
+    function onClick() {
+        chrome.tabs.query({currentWindow: true, active: true},
         function (tabs) {
-            chrome.tabs.sendMessage(tabs[0].id, 'hi')
+            chrome.tabs.sendMessage(tabs[0].id, 'Hi')
         })
     }
-
-})
-
+}, false)
