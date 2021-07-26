@@ -3,13 +3,10 @@
     "version": "1.0",
     "manifest_version": 2,
     "description": "Statistics aggregator/generator/presenter that improves the end game stats screen",
-    "content_scripts": [
+    "content_scripts":[
         {
-            "matches": ["https://dominion.games/"],
-            "js": ["content.js"]
+          "matches":["https://dominion.games/"],
+          "js":["main.js"]
         }
-    ],
-    "background": {
-        "scripts": ["background.js"]
-    }
+    ]
 }

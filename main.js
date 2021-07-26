@@ -1,6 +1,10 @@
-// Need to figure out how on earth to call this.
-// I want it to be called at the end of each turn order. 
-
+document.addEventListener('DOMContentLoaded', function () {
+    const gameLog = document.querySelector('.game-log')
+    gameLog.addEventListener('DOMNodeInserted', getPlayerStatus);
+}, false);
+    
+    
+    
 function getPlayerStatus() {
     const players = []
     for (let player of document.querySelectorAll('.opponent-name-vp')) {
@@ -17,7 +21,7 @@ function getPlayerStatus() {
     for (let player of players) {
         resultsString += `${player.name}: ${player.vp}\n`;
     }
-    console.log(resultsString);
+    alert(resultsString);
 }
 
 function clean(inputString) {
