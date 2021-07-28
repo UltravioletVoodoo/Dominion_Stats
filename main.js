@@ -18,41 +18,63 @@ function determineAction() {
     }
 }
 
+function convertData(data) {
+    let playerData = {};
+    const keys = Object.keys(data);
+    keys.forEach((key, index) => {
+        for (let playerTurn of data[key]) {
+            if (playerData[playerTurn.name] === undefined) {
+                // we dont have that player yet
+                playerData[playerTurn.name] = [{x: key, y: playerTurn.vp}];
+            } else {
+                // we already have that player
+                playerData[playerTurn.name].push({x: key, y: playerTurn.vp});
+            }
+        }
+    });
+    return playerData;
+}
+
+function getScale(playerData, players, height, width) {
+    let highestScore = 0;
+    let lowestScore = 0;
+    let numTurns = 0
+    players.forEach((player, index) => {
+        numTurns = playerData[player].length;
+        for (let turn of playerData[player]) {
+            if (turn.y > highestScore) highestScore = turn.y;
+            if (turn.y < lowestScore) lowestScore = turn.y;
+        }
+    });
+    const heightRange = Math.abs(highestScore - lowestScore);
+    const heightScale = height / heightRange;
+    const widthScale = width / numTurns;
+
+    return {x: widthScale, y: heightScale};
+}
+
 function displayData() {
     if (displaying) return;
+    const playerData = convertData(getData());
     let body = document.querySelector('body');
     let display = document.createElement('div');
     display.innerHTML = 
-    `
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
-<canvas id="myChart" style="width:100%;max-width:600px"></canvas>
-
-<script>
-var xValues = [50,60,70,80,90,100,110,120,130,140,150];
-var yValues = [7,8,8,9,9,9,10,11,14,14,15];
-
-new Chart("myChart", {
-    type: "line",
-    data: {
-        labels: xValues,
-        datasets: [{
-            fill: false,
-            lineTension: 0,
-            backgroundColor: "rgba(0,0,255,1.0)",
-            borderColor: "rgba(0,0,255,0.1)",
-            data: yValues
-        }]
-    },
-    options: {
-        legend: {display: false},
-        scales: {
-            yAxes: [{ticks: {min: 6, max:16}}],
-        }
-    }
-});
-</script>
+`
+<canvas id="displayCanvas" style="background-color: white; position: absolute; z-index: 1000000" width="300px" height="200px"></canvas>
 `;
     body.appendChild(display);
+    let canvas = document.getElementById("displayCanvas");
+    var ctx = canvas.getContext("2d");
+    const players = Object.keys(playerData);
+    const scale = getScale(playerData, players, canvas.height, canvas.width);
+    players.forEach((player, index) => {
+        ctx.moveTo(0, canvas.height);
+        for (let turn of playerData[player]) {
+            ctx.lineTo(turn.x * scale.x, canvas.height - (turn.y * scale.y));
+        }
+        ctx.stroke();
+    });
+
     displaying = true;
 }
 
