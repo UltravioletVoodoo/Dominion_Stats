@@ -1,4 +1,5 @@
 let turnNum = 0;
+displayIndicator()
 let interval = setInterval(determineAction, 1000);
 let myGameID = ''
 let gameover = false;
@@ -7,9 +8,9 @@ const colors = [
     '#ff0000',
     '#00ff00',
     '#0000ff',
-    '#ffff00',
+    '#ff00ff',
     '#00ffff',
-    '#ff00ff'
+    '#ffff00'
 ];
 
 function determineAction() {
@@ -109,6 +110,22 @@ function resetGame() {
     turn = 0;
     myGameID = getGameID()
     clearData();
+}
+
+function displayIndicator() {
+    let body = document.querySelector('body');
+    let indicator = document.createElement('div');
+    indicator.innerHTML = 
+    `
+    <div 
+        style="position: fixed; left: 10px; bottom: 10px; z-index:100; background-color: red; color: black; opacity: 0.7; cursor: default; transition: 0.3s"
+        onmouseover="this.style.opacity = 1.0"
+        onmouseout="this.style.opacity = 0.7"
+        >
+        Stats are being recorded
+    </div>
+    `;
+    body.appendChild(indicator);
 }
 
 function gatherData() {
