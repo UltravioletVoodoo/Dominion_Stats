@@ -3,6 +3,14 @@ let interval = setInterval(determineAction, 1000);
 let myGameID = ''
 let gameover = false;
 let displaying = false;
+const colors = [
+    '#ff0000',
+    '#00ff00',
+    '#0000ff',
+    '#ffff00',
+    '#00ffff',
+    '#ff00ff'
+];
 
 function determineAction() {
     if (document.querySelector('.game-log')) {
@@ -21,7 +29,7 @@ function determineAction() {
 function convertData(data) {
     let playerData = {};
     const keys = Object.keys(data);
-    keys.forEach((key, index) => {
+    keys.forEach((key, index) => { 
         for (let playerTurn of data[key]) {
             if (playerData[playerTurn.name] === undefined) {
                 // we dont have that player yet
@@ -56,23 +64,35 @@ function getScale(playerData, players, height, width) {
 function displayData() {
     if (displaying) return;
     const playerData = convertData(getData());
-    let body = document.querySelector('body');
-    let display = document.createElement('div');
-    display.innerHTML = 
+    let location = document.querySelector('.active-table-rules-list');
+    location.innerHTML = 
 `
-<canvas id="displayCanvas" style="background-color: white; position: absolute; z-index: 1000000" width="300px" height="200px"></canvas>
+<canvas id="displayCanvas" style="background-color: white; position: relative; z-index: 1000000; left: 50%; transform: translateX(-50%); margin-top: 50px" width="300px" height="200px"></canvas>
 `;
-    body.appendChild(display);
     let canvas = document.getElementById("displayCanvas");
     var ctx = canvas.getContext("2d");
     const players = Object.keys(playerData);
     const scale = getScale(playerData, players, canvas.height, canvas.width);
+    let currColor = -1;
     players.forEach((player, index) => {
+        currColor = currColor === colors.length ? 0 : currColor + 1;
+        console.log(`setting the color for ${player} to ${colors[currColor]}`);
+        ctx.beginPath();
+        ctx.strokeStyle = colors[currColor];
         ctx.moveTo(0, canvas.height);
         for (let turn of playerData[player]) {
             ctx.lineTo(turn.x * scale.x, canvas.height - (turn.y * scale.y));
         }
         ctx.stroke();
+        ctx.closePath();
+
+        // make the colors make sense by coloring all of the names :O next level strats
+        let playerElements = document.querySelectorAll('.table-person-name');
+        for (let playerElement of playerElements) {
+            if (playerElement.innerHTML === player) {
+                playerElement.style.color = colors[currColor];
+            }
+        }
     });
 
     displaying = true;
