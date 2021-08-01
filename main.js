@@ -59,7 +59,7 @@ function getScale(playerData, players, height, width) {
     const heightScale = height / heightRange;
     const widthScale = width / numTurns;
 
-    return {x: widthScale, y: heightScale};
+    return {x: widthScale, y: heightScale, lowest: lowestScore};
 }
 
 function displayData() {
@@ -77,12 +77,11 @@ function displayData() {
     let currColor = -1;
     players.forEach((player, index) => {
         currColor = currColor === colors.length ? 0 : currColor + 1;
-        console.log(`setting the color for ${player} to ${colors[currColor]}`);
         ctx.beginPath();
         ctx.strokeStyle = colors[currColor];
-        ctx.moveTo(0, canvas.height);
+        ctx.moveTo(0, canvas.height - scale.lowest * scale.y);
         for (let turn of playerData[player]) {
-            ctx.lineTo(turn.x * scale.x, canvas.height - (turn.y * scale.y));
+            ctx.lineTo(turn.x * scale.x, canvas.height - ((turn.y + Math.abs(scale.lowest)) * scale.y));
         }
         ctx.stroke();
         ctx.closePath();
@@ -95,6 +94,15 @@ function displayData() {
             }
         }
     });
+
+    // dislay the zero line
+    ctx.beginPath();
+    ctx.strokeStyle = '#000000'
+    ctx.lineWidth = 2;
+    ctx.moveTo(0, canvas.height - Math.abs(scale.lowest) * scale.y)
+    ctx.lineTo(canvas.width, canvas.height - Math.abs(scale.lowest) * scale.y)
+    ctx.stroke();
+    ctx.closePath();
 
     displaying = true;
 }
