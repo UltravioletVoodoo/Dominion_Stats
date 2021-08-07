@@ -159,7 +159,7 @@ function handleGameEnd() {
         button.innerHTML = oldValue;
         button.disabled = false;
         button.style.backgroundColor = color;
-    }, 3000);
+    }, 5000);
 }
 
 function gameEnded() {
